@@ -1,6 +1,6 @@
 function Main({children}) {
     return (
-        <div>
+        <div style={{height:"600px"}}>
      {children}
         </div>
     )
