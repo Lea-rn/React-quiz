@@ -219,3 +219,25 @@ position: absolute;
 margin-left: auto;
 margin-right: auto;
 }
+
+footer {
+  position: relative;
+}
+
+.timer {
+     background-color: var(--color-dark);
+ color: var(--color-light);
+ border: none;
+ padding: 10px 15px;
+ font-weight: 900;
+ border-radius: 10px;
+ cursor: pointer;
+ display: block;
+margin-left: auto;
+margin-right: auto;
+width: 3%;
+position: absolute;
+left: 400px;
+text-align: center;
+
+}

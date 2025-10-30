@@ -9,9 +9,12 @@ import Question from "./components/Question";
 import NextButton from "./components/NextButton";
 import Progress from "./components/Progress";
 import FinishScreen from "./components/FinishScreen";
+import Footer from "./components/Footer";
+import Timer from "./components/Timer";
 
 
   //// "loading" , "error" , "ready" , "active" , "finished" ...
+  const SECS_PER_QUESTION = 20
 
 const initialState = {
   questions: [],  ///// array of question ..
@@ -19,7 +22,8 @@ const initialState = {
   index : 0 , ////// number of question.. 
   answer : null ,  //////// exist of answer ... 
   points : 0 ,
-  highscore : 0
+  highscore : 0 ,
+  secondRemaining : null
 };
 
 function reducer(state, action) { // {type:"newAnswer" , payload : 0}
@@ -36,7 +40,7 @@ function reducer(state, action) { // {type:"newAnswer" , payload : 0}
       }
    
       case "start" : 
-      return {...state , status:"active"}
+      return {...state , status:"active" , secondRemaining : state.questions.length* SECS_PER_QUESTION }
 
       case "newAnswer" : 
       const question = state.questions.at(state.index)   //// first element
@@ -56,18 +60,25 @@ function reducer(state, action) { // {type:"newAnswer" , payload : 0}
            return {
             ...initialState , questions : state.questions ,   status: "ready"
            }
+
+           case "tick" : 
+           return {
+            ...state , secondRemaining : state.secondRemaining - 1 ,
+            status : state.secondRemaining === 0 ? "finished" : state.status
+           }
+
     default:
       throw new Error("Action unkonwn");
   }
 }
 
 function App() {
-  const [{questions , status , index , answer , points , highscore }, dispatch] = useReducer(reducer, initialState);
+  const [{questions , status , index , answer , points , highscore , secondRemaining }, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length ;
 
   const maxPossiblePoints = questions.reduce((acc,ele)=> acc  + ele.points,0) 
-  console.log(maxPossiblePoints)
+
 
   useEffect(function () {
     fetch("http://localhost:7000/questions")
@@ -97,11 +108,18 @@ function App() {
        <Question question={
         questions[index] 
        }  dispatch={dispatch} answer={answer} />
-       <NextButton dispatch={dispatch}
+       <Footer>
+              <NextButton dispatch={dispatch}
         answer={answer}
         numQuestions={numQuestions}
         index={index}
         />
+
+      <Timer dispatch={dispatch} 
+      secondRemaining={secondRemaining}
+      />
+       </Footer>
+ 
 </>
 }
 
